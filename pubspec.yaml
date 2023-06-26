@@ -18,12 +18,18 @@ dependencies:
   geolocator: ^9.0.2
   fluttertoast: ^8.2.2
   intl: ^0.17.0
+  flutter_launcher_icons: '^0.9.2'
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: 'assets/iconsstatus/dark-and-stormy.png'
 
 flutter:
   uses-material-design: true
