@@ -20,11 +20,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final myController = TextEditingController();
   bool isLoading = true;
-  List<WeatherDay> weatherDays = [];
+  // List<WeatherDay> weatherDays = [];
 
   String climateDescription = '';
   String climate = '';
-  String myLocation = '';
+  String myLocationName = '';
   String iconStautus = '';
   String day = '';
   String sunrise = '';
@@ -48,141 +48,150 @@ class _HomePageState extends State<HomePage> {
     fetchData();
   }
 
-  // void updateWeatherData(String resBody) {
-  //   Map<String, dynamic> data = jsonDecode(resBody);
-
-  //   // แปลง timestamp เป็นวันที่และเวลา
-  //   int timestamp = data['dt'];
-  //   DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-  //   String formattedDate = DateFormat('EEEE').format(date); // ชื่อวัน
-
-  //   int sunriseTimestamp = data['sys']['sunrise'];
-  //   DateTime sunriseDate =
-  //       DateTime.fromMillisecondsSinceEpoch(sunriseTimestamp * 1000);
-  //   String formattedSunrise = DateFormat('HH:mm').format(sunriseDate);
-
-  //   int sunsetTimestamp = data['sys']['sunset'];
-  //   DateTime sunsetDate =
-  //       DateTime.fromMillisecondsSinceEpoch(sunsetTimestamp * 1000);
-  //   String formattedSunset = DateFormat('HH:mm').format(sunsetDate);
-
-  //   // กำหนดค่าใหม่โดยใช้ข้อมูลจาก API
-  //   setState(() {
-  //     climateDescription = data['weather'][0]['description'];
-  //     climate = data['weather'][0]['main'];
-  //     iconStautus = data['weather'][0]['icon'];
-  //     temp = data['main']['temp'];
-  //     pressure = data['main']['pressure'];
-  //     myLocation = data['name'];
-  //     day = formattedDate;
-  //     deg = data['wind']['deg'];
-  //     speed = data['wind']['speed'];
-  //     humidity = data['main']['humidity'];
-  //     sunset = formattedSunset;
-  //     sunrise = formattedSunrise;
-  //     isLoading = false;
-  //   });
-
-  //   print(
-  //       '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
-  //   print('Climate Description: $climateDescription');
-  //   print('Climate: $climate');
-  //   print('iconStautus: $iconStautus');
-  //   print('myLocation: $myLocation');
-  //   print('formattedDate: $formattedDate');
-  //   print('deg: $deg');
-  //   print('speed: $speed');
-  //   print('pressure: $pressure');
-  //   print(
-  //       '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
-  // }
   void updateWeatherData(String resBody) {
     Map<String, dynamic> data = jsonDecode(resBody);
-    WeatherData weatherData = WeatherData.fromJson(data);
 
-    // เก็บข้อมูลสภาพอากาศของ 5 วัน
-    weatherDays = weatherData.days;
-
-    // แปลง timestamp เป็นวันที่และเวลา (สำหรับข้อมูลวันแรก)
-    int timestamp = weatherData.days[0].dt;
+    // แปลง timestamp เป็นวันที่และเวลา
+    int timestamp = data['dt'];
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     String formattedDate = DateFormat('EEEE').format(date); // ชื่อวัน
 
-    // กำหนดค่าใหม่โดยใช้ข้อมูลจาก API (ข้อมูลวันแรก)
+    int sunriseTimestamp = data['sys']['sunrise'];
+    DateTime sunriseDate =
+        DateTime.fromMillisecondsSinceEpoch(sunriseTimestamp * 1000);
+    String formattedSunrise = DateFormat('HH:mm').format(sunriseDate);
+
+    int sunsetTimestamp = data['sys']['sunset'];
+    DateTime sunsetDate =
+        DateTime.fromMillisecondsSinceEpoch(sunsetTimestamp * 1000);
+    String formattedSunset = DateFormat('HH:mm').format(sunsetDate);
+
+    // กำหนดค่าใหม่โดยใช้ข้อมูลจาก API
     setState(() {
-      climateDescription = weatherData.days[0].main;
-      temp = weatherData.days[0].temp;
-      pressure = weatherData.days[0].pressure;
-      myLocation = weatherData.cityName;
+      climateDescription = data['weather'][0]['description'];
+      climate = data['weather'][0]['main'];
+      iconStautus = data['weather'][0]['icon'];
+      temp = data['main']['temp'];
+      pressure = data['main']['pressure'];
+      myLocationName = data['name'];
       day = formattedDate;
-      humidity = weatherData.days[0].humidity;
+      deg = data['wind']['deg'];
+      speed = data['wind']['speed'];
+      humidity = data['main']['humidity'];
+      sunset = formattedSunset;
+      sunrise = formattedSunrise;
       isLoading = false;
     });
+
+    print(
+        '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
+    print('Climate Description: $climateDescription');
+    print('Climate: $climate');
+    print('iconStautus: $iconStautus');
+    print('myLocation: $myLocationName');
+    print('formattedDate: $formattedDate');
+    print('deg: $deg');
+    print('speed: $speed');
+    print('pressure: $pressure');
+    print(
+        '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
   }
+  // void updateWeatherData(String resBody) {
+  //   Map<String, dynamic> data = jsonDecode(resBody);
+  //   WeatherData weatherData = WeatherData.fromJson(data);
+
+  //   // เก็บข้อมูลสภาพอากาศของ 5 วัน
+  //   weatherDays = weatherData.days;
+
+  //   // แปลง timestamp เป็นวันที่และเวลา (สำหรับข้อมูลวันแรก)
+  //   int timestamp = weatherData.days[0].dt;
+  //   DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  //   String formattedDate = DateFormat('EEEE').format(date); // ชื่อวัน
+
+  //   // กำหนดค่าใหม่โดยใช้ข้อมูลจาก API (ข้อมูลวันแรก)
+  //   setState(() {
+  //     climateDescription = weatherData.days[0].main;
+  //     temp = weatherData.days[0].temp;
+  //     pressure = weatherData.days[0].pressure;
+  //     myLocation = weatherData.cityName;
+  //     day = formattedDate;
+  //     humidity = weatherData.days[0].humidity;
+  //     isLoading = false;
+  //   });
+  // }
 
   Future<void> fetchData() async {
-    // LocationPermission permission;
+    try {
+      LocationPermission permission;
 
-    // // Check if GPS is enabled
-    // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (!isLocationServiceEnabled) {
-    //   // GPS not enabled, show a toast message
-    //   Fluttertoast.showToast(
-    //       msg: "GPS ไม่ได้ถูกเปิดใช้งาน, กรุณาเปิด GPS",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.BOTTOM,
-    //       timeInSecForIosWeb: 2,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    //   return;
-    // }
+      // Check if GPS is enabled
+      bool isLocationServiceEnabled =
+          await Geolocator.isLocationServiceEnabled();
+      if (!isLocationServiceEnabled) {
+        // GPS not enabled, show a toast message
+        Fluttertoast.showToast(
+            msg: "GPS ไม่ได้ถูกเปิดใช้งาน, กรุณาเปิด GPS",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        return;
+      }
 
-    // // Check location permissions
-    // permission = await Geolocator.checkPermission();
-    // if (permission == LocationPermission.denied) {
-    //   permission = await Geolocator.requestPermission();
-    //   if (permission == LocationPermission.denied) {
-    //     // Permissions are denied, show a toast message
-    //     Fluttertoast.showToast(
-    //         msg:
-    //             "การเข้าถึงตำแหน่งถูกปฏิเสธ, กรุณาอนุญาตให้เราเข้าถึงตำแหน่งของคุณ",
-    //         toastLength: Toast.LENGTH_SHORT,
-    //         gravity: ToastGravity.BOTTOM,
-    //         timeInSecForIosWeb: 2,
-    //         backgroundColor: Colors.red,
-    //         textColor: Colors.white,
-    //         fontSize: 16.0);
-    //     return;
-    //   }
-    // }
+      // Check location permissions
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // Permissions are denied, show a toast message
+          Fluttertoast.showToast(
+              msg:
+                  "การเข้าถึงตำแหน่งถูกปฏิเสธ, กรุณาอนุญาตให้เราเข้าถึงตำแหน่งของคุณ",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          return;
+        }
+      }
 
-    // if (permission == LocationPermission.deniedForever) {
-    //   // Permissions are denied forever, show a toast message
-    //   Fluttertoast.showToast(
-    //       msg:
-    //           "การเข้าถึงตำแหน่งถูกปฏิเสธอย่างถาวร, เราไม่สามารถร้องขอการอนุญาตได้",
-    //       toastLength: Toast.LENGTH_SHORT,
-    //       gravity: ToastGravity.CENTER,
-    //       timeInSecForIosWeb: 2,
-    //       backgroundColor: Colors.red,
-    //       textColor: Colors.white,
-    //       fontSize: 16.0);
-    //   return;
-    // }
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are denied forever, show a toast message
+        Fluttertoast.showToast(
+            msg:
+                "การเข้าถึงตำแหน่งถูกปฏิเสธอย่างถาวร, เราไม่สามารถร้องขอการอนุญาตได้",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        return;
+      }
 
-    // // If GPS is enabled and permissions are granted, get the current position
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    double latitude = position.latitude;
-    double longitude = position.longitude;
+      // // If GPS is enabled and permissions are granted, get the current position
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      double latitude = position.latitude;
+      double longitude = position.longitude;
 
-    var url = Uri.parse(
-        // 'https://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric'
-        'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric');
-    var res = await http.get(url);
-    if (res.statusCode == 200) {
-      updateWeatherData(res.body);
+      var url = Uri.parse(
+          // 'https://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric'
+          'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric');
+      var res = await http.get(url);
+      if (res.statusCode == 200) {
+        updateWeatherData(res.body);
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -282,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                         height: 15,
                       ),
                       Text(
-                        '$myLocation',
+                        '$myLocationName',
                         style: TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.w400,
