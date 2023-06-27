@@ -40,7 +40,7 @@ class WeatherDay {
 }
 
 class WeatherData {
-  final int cod;
+  final String cod;
   final int message;
   final int cnt;
   final List<WeatherDay> days;
