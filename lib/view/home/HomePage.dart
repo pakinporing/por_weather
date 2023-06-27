@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
+import 'package:por_weather/model/WeatherData.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -16,7 +18,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final myController = TextEditingController();
   bool isLoading = true;
+  List<WeatherDay> weatherDays = [];
 
   String climateDescription = '';
   String climate = '';
@@ -32,88 +36,174 @@ class _HomePageState extends State<HomePage> {
   int pressure = 0;
 
   @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     fetchData();
   }
 
+  // void updateWeatherData(String resBody) {
+  //   Map<String, dynamic> data = jsonDecode(resBody);
+
+  //   // แปลง timestamp เป็นวันที่และเวลา
+  //   int timestamp = data['dt'];
+  //   DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  //   String formattedDate = DateFormat('EEEE').format(date); // ชื่อวัน
+
+  //   int sunriseTimestamp = data['sys']['sunrise'];
+  //   DateTime sunriseDate =
+  //       DateTime.fromMillisecondsSinceEpoch(sunriseTimestamp * 1000);
+  //   String formattedSunrise = DateFormat('HH:mm').format(sunriseDate);
+
+  //   int sunsetTimestamp = data['sys']['sunset'];
+  //   DateTime sunsetDate =
+  //       DateTime.fromMillisecondsSinceEpoch(sunsetTimestamp * 1000);
+  //   String formattedSunset = DateFormat('HH:mm').format(sunsetDate);
+
+  //   // กำหนดค่าใหม่โดยใช้ข้อมูลจาก API
+  //   setState(() {
+  //     climateDescription = data['weather'][0]['description'];
+  //     climate = data['weather'][0]['main'];
+  //     iconStautus = data['weather'][0]['icon'];
+  //     temp = data['main']['temp'];
+  //     pressure = data['main']['pressure'];
+  //     myLocation = data['name'];
+  //     day = formattedDate;
+  //     deg = data['wind']['deg'];
+  //     speed = data['wind']['speed'];
+  //     humidity = data['main']['humidity'];
+  //     sunset = formattedSunset;
+  //     sunrise = formattedSunrise;
+  //     isLoading = false;
+  //   });
+
+  //   print(
+  //       '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
+  //   print('Climate Description: $climateDescription');
+  //   print('Climate: $climate');
+  //   print('iconStautus: $iconStautus');
+  //   print('myLocation: $myLocation');
+  //   print('formattedDate: $formattedDate');
+  //   print('deg: $deg');
+  //   print('speed: $speed');
+  //   print('pressure: $pressure');
+  //   print(
+  //       '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
+  // }
   void updateWeatherData(String resBody) {
     Map<String, dynamic> data = jsonDecode(resBody);
+    WeatherData weatherData = WeatherData.fromJson(data);
 
-    // แปลง timestamp เป็นวันที่และเวลา
-    int timestamp = data['dt'];
+    // เก็บข้อมูลสภาพอากาศของ 5 วัน
+    weatherDays = weatherData.days;
+
+    // แปลง timestamp เป็นวันที่และเวลา (สำหรับข้อมูลวันแรก)
+    int timestamp = weatherData.days[0].dt;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     String formattedDate = DateFormat('EEEE').format(date); // ชื่อวัน
 
-    int sunriseTimestamp = data['sys']['sunrise'];
-    DateTime sunriseDate =
-        DateTime.fromMillisecondsSinceEpoch(sunriseTimestamp * 1000);
-    String formattedSunrise = DateFormat('HH:mm').format(sunriseDate);
-
-    int sunsetTimestamp = data['sys']['sunset'];
-    DateTime sunsetDate =
-        DateTime.fromMillisecondsSinceEpoch(sunsetTimestamp * 1000);
-    String formattedSunset = DateFormat('HH:mm').format(sunsetDate);
-
-    // กำหนดค่าใหม่โดยใช้ข้อมูลจาก API
+    // กำหนดค่าใหม่โดยใช้ข้อมูลจาก API (ข้อมูลวันแรก)
     setState(() {
-      climateDescription = data['weather'][0]['description'];
-      climate = data['weather'][0]['main'];
-      iconStautus = data['weather'][0]['icon'];
-      temp = data['main']['temp'];
-      pressure = data['main']['pressure'];
-      myLocation = data['name'];
+      climateDescription = weatherData.days[0].main;
+      temp = weatherData.days[0].temp;
+      pressure = weatherData.days[0].pressure;
+      myLocation = weatherData.cityName;
       day = formattedDate;
-      deg = data['wind']['deg'];
-      speed = data['wind']['speed'];
-      humidity = data['main']['humidity'];
-      sunset = formattedSunset;
-      sunrise = formattedSunrise;
+      humidity = weatherData.days[0].humidity;
       isLoading = false;
     });
-
-    print(
-        '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
-    print('Climate Description: $climateDescription');
-    print('Climate: $climate');
-    print('iconStautus: $iconStautus');
-    print('myLocation: $myLocation');
-    print('formattedDate: $formattedDate');
-    print('deg: $deg');
-    print('speed: $speed');
-    print('pressure: $pressure');
-    print(
-        '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
   }
 
   Future<void> fetchData() async {
-    // ...
+    // LocationPermission permission;
 
+    // // Check if GPS is enabled
+    // bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!isLocationServiceEnabled) {
+    //   // GPS not enabled, show a toast message
+    //   Fluttertoast.showToast(
+    //       msg: "GPS ไม่ได้ถูกเปิดใช้งาน, กรุณาเปิด GPS",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.BOTTOM,
+    //       timeInSecForIosWeb: 2,
+    //       backgroundColor: Colors.red,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    //   return;
+    // }
+
+    // // Check location permissions
+    // permission = await Geolocator.checkPermission();
+    // if (permission == LocationPermission.denied) {
+    //   permission = await Geolocator.requestPermission();
+    //   if (permission == LocationPermission.denied) {
+    //     // Permissions are denied, show a toast message
+    //     Fluttertoast.showToast(
+    //         msg:
+    //             "การเข้าถึงตำแหน่งถูกปฏิเสธ, กรุณาอนุญาตให้เราเข้าถึงตำแหน่งของคุณ",
+    //         toastLength: Toast.LENGTH_SHORT,
+    //         gravity: ToastGravity.BOTTOM,
+    //         timeInSecForIosWeb: 2,
+    //         backgroundColor: Colors.red,
+    //         textColor: Colors.white,
+    //         fontSize: 16.0);
+    //     return;
+    //   }
+    // }
+
+    // if (permission == LocationPermission.deniedForever) {
+    //   // Permissions are denied forever, show a toast message
+    //   Fluttertoast.showToast(
+    //       msg:
+    //           "การเข้าถึงตำแหน่งถูกปฏิเสธอย่างถาวร, เราไม่สามารถร้องขอการอนุญาตได้",
+    //       toastLength: Toast.LENGTH_SHORT,
+    //       gravity: ToastGravity.CENTER,
+    //       timeInSecForIosWeb: 2,
+    //       backgroundColor: Colors.red,
+    //       textColor: Colors.white,
+    //       fontSize: 16.0);
+    //   return;
+    // }
+
+    // // If GPS is enabled and permissions are granted, get the current position
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     double latitude = position.latitude;
     double longitude = position.longitude;
 
-    // double testLat = 55;
-    // double testLong = 41;
-
     var url = Uri.parse(
+        // 'https://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric'
         'https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric');
-    // 'https://api.openweathermap.org/data/2.5/weather?lat=$testLat&lon=$testLong&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric');
     var res = await http.get(url);
     if (res.statusCode == 200) {
       updateWeatherData(res.body);
     }
-    // ...
   }
 
   Future<void> fetchDataByCityName(String cityName) async {
     // ...
     var url = Uri.parse(
+        // 'https://api.openweathermap.org/data/2.5/forecast?q=$cityName&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric'
         'https://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric');
     var res = await http.get(url);
     if (res.statusCode == 200) {
       updateWeatherData(res.body);
+    } else {
+      print('66666  ไม่มีสถานที่ 666');
+      Fluttertoast.showToast(
+          msg: "ไม่มี $cityName อยู่ในฐานข้อมูลโว้ยยย",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 2,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     }
     // ...
   }
@@ -130,8 +220,10 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Color.fromARGB(255, 111, 190, 255),
           appBar: AppBar(
             title: TextField(
+              controller: myController,
               onSubmitted: (value) {
                 fetchDataByCityName(value);
+                myController.clear();
               },
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
