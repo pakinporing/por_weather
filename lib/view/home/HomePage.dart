@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   int humidity = 0;
   double speed = 0;
   int pressure = 0;
+  int id = 0;
 
   @override
   void dispose() {
@@ -74,6 +75,7 @@ class _HomePageState extends State<HomePage> {
       temp = data['main']['temp'];
       pressure = data['main']['pressure'];
       myLocationName = data['name'];
+      id = data['id'];
       day = formattedDate;
       deg = data['wind']['deg'];
       speed = data['wind']['speed'];
@@ -93,6 +95,9 @@ class _HomePageState extends State<HomePage> {
     print('deg: $deg');
     print('speed: $speed');
     print('pressure: $pressure');
+    print('temp: $temp');
+    print('humidity: $humidity');
+    print('id: $id');
     print(
         '---------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------');
   }
@@ -136,7 +141,7 @@ class _HomePageState extends State<HomePage> {
             timeInSecForIosWeb: 2,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0);
+            fontSize: 22.0);
         return;
       }
 
@@ -154,7 +159,7 @@ class _HomePageState extends State<HomePage> {
               timeInSecForIosWeb: 2,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0);
+              fontSize: 22.0);
           return;
         }
       }
@@ -169,15 +174,19 @@ class _HomePageState extends State<HomePage> {
             timeInSecForIosWeb: 2,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0);
+            fontSize: 22.0);
         return;
       }
 
       // // If GPS is enabled and permissions are granted, get the current position
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
+
       double latitude = position.latitude;
       double longitude = position.longitude;
+
+      // double latitude = 16.9064;
+      // double longitude = 101.0872;
 
       var url = Uri.parse(
           // 'https://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric'
@@ -205,15 +214,15 @@ class _HomePageState extends State<HomePage> {
     if (res.statusCode == 200) {
       updateWeatherData(res.body);
     } else {
-      print('66666  ไม่มีสถานที่ 666');
+      print('---------------------ไม่มีสถานที่---------------------');
       Fluttertoast.showToast(
-          msg: "ไม่มี $cityName อยู่ในฐานข้อมูลโว้ยยย",
+          msg: 'ไม่มี "$cityName " อยู่ในฐานข้อมูลโว้ยยย',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 2,
           backgroundColor: Colors.red,
           textColor: Colors.white,
-          fontSize: 16.0);
+          fontSize: 22.0);
     }
     // ...
   }
