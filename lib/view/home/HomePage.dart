@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
-import 'package:por_weather/model/WeatherData.dart';
+// import 'package:por_weather/model/WeatherData.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -22,11 +22,11 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = true;
   // List<WeatherDay> weatherDays = [];
 
-  String climateDescription = '';
-  String climate = '';
-  String myLocationName = '';
-  String iconStautus = '';
-  String day = '';
+  String climateDescription = 'เปิด gps สิ';
+  String climate = 'เปิด gps สิ';
+  String myLocationName = 'เปิด gps สิ';
+  String iconStautus = 'เปิด gps สิ';
+  String day = 'เปิด gps สิ';
   String sunrise = '';
   String sunset = '';
   int deg = 0;
@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
         Fluttertoast.showToast(
             msg: "GPS ไม่ได้ถูกเปิดใช้งาน, กรุณาเปิด GPS",
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
+            gravity: ToastGravity.TOP,
             timeInSecForIosWeb: 2,
             backgroundColor: Colors.red,
             textColor: Colors.white,
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> {
               msg:
                   "การเข้าถึงตำแหน่งถูกปฏิเสธ, กรุณาอนุญาตให้เราเข้าถึงตำแหน่งของคุณ",
               toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
+              gravity: ToastGravity.TOP,
               timeInSecForIosWeb: 2,
               backgroundColor: Colors.red,
               textColor: Colors.white,
@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
             msg:
                 "การเข้าถึงตำแหน่งถูกปฏิเสธอย่างถาวร, เราไม่สามารถร้องขอการอนุญาตได้",
             toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
+            gravity: ToastGravity.TOP,
             timeInSecForIosWeb: 2,
             backgroundColor: Colors.red,
             textColor: Colors.white,
@@ -196,6 +196,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> fetchDataByCityName(String cityName) async {
+    cityName = cityName.trim();
     // ...
     var url = Uri.parse(
         // 'https://api.openweathermap.org/data/2.5/forecast?q=$cityName&appid=8e7cb329abf8bf036cc6f7858110175e&units=metric'
@@ -208,7 +209,7 @@ class _HomePageState extends State<HomePage> {
       Fluttertoast.showToast(
           msg: "ไม่มี $cityName อยู่ในฐานข้อมูลโว้ยยย",
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
+          gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 2,
           backgroundColor: Colors.red,
           textColor: Colors.white,
@@ -239,9 +240,10 @@ class _HomePageState extends State<HomePage> {
                 hintText: "Search",
                 hintStyle: TextStyle(color: Colors.white),
                 prefixIcon: Icon(Icons.search, color: Colors.white),
+                border: InputBorder.none,
               ),
             ),
-            backgroundColor: Color.fromARGB(255, 111, 190, 255),
+            backgroundColor: Color.fromARGB(255, 248, 188, 24),
           ),
           body: RefreshIndicator(
             onRefresh: fetchData,
@@ -249,7 +251,7 @@ class _HomePageState extends State<HomePage> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 70),
+                  padding: const EdgeInsets.only(top: 20),
                   child: Column(
                     children: [
                       SizedBox(
@@ -342,7 +344,7 @@ class _HomePageState extends State<HomePage> {
                         height: 30,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 30),
+                        padding: const EdgeInsets.only(left: 50),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -408,65 +410,68 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.thermostat,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                          SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '$pressure mbar',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
+                      Padding(
+                        padding: const EdgeInsets.only(left: 50),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.thermostat,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                            SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '$pressure mbar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Pressure',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
+                                Text(
+                                  'Pressure',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(width: 50),
-                          Icon(
-                            Icons.swap_vert,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                          SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '$sunrise sunrise',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
+                              ],
+                            ),
+                            SizedBox(width: 50),
+                            Icon(
+                              Icons.swap_vert,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                            SizedBox(width: 5),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '$sunrise sunrise',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '$sunset sunset',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
+                                Text(
+                                  '$sunset sunset',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
