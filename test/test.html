@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>การคำนวณเงินทอน</title>
+    <style>
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>การคำนวณเงินทอน</h1>
+
+    <div>
+      <label for="price">ราคาสินค้า:</label>
+      <input type="number" id="price" placeholder="กรอกจำนวนเงิน" min="0" />
+    </div>
+
+    <div>
+      <label for="payment">จำนวนเงินที่ลูกค้าจ่ายมา:</label>
+      <input type="number" id="payment" placeholder="กรอกจำนวนเงิน" min="0" />
+    </div>
+    <br />
+    <button onclick="calculateChange()">คำนวณ</button>
+
+    <h2>ผลลัพธ์:</h2>
+    <div id="changeResult"></div>
+
+    <script>
+      function calculateChange() {
+        var priceInput = document.getElementById('price');
+        var paymentInput = document.getElementById('payment');
+        var changeResultDiv = document.getElementById('changeResult');
+
+        var price = parseFloat(priceInput.value);
+        var payment = parseFloat(paymentInput.value);
+
+        if (isNaN(price) || isNaN(payment)) {
+          changeResultDiv.textContent = 'กรุณากรอกจำนวนเงินที่ถูกต้อง';
+          return;
+        }
+
+        if (payment < price) {
+          changeResultDiv.textContent = 'จำนวนเงินไม่พอจ่าย';
+          return;
+        }
+
+        var change = payment - price;
+        var denominations = [1000, 500, 100, 50, 20, 10, 5, 2, 1];
+        var result = {};
+
+        for (var i = 0; i < denominations.length; i++) {
+          var denomination = denominations[i];
+          var count = Math.floor(change / denomination);
+          console.log(`รอบที่    ${i}`);
+          console.log(`change    ${change}`);
+          console.log(`denomination    ${denomination}`);
+          console.log(`count    ${count}`);
+
+          console.log('----------------');
+
+          if (count > 0) {
+            if (
+              denomination >= 1000 ||
+              denomination >= 500 ||
+              denomination >= 100
+            ) {
+              result[
+                'ถอนด้วย ธนบัตร   ' +
+                  denomination +
+                  ' บาท  จำนวน   ' +
+                  count +
+                  ' ใบ'
+              ] = count;
+            } else {
+              result[
+                'ถอนด้วย เหรียญ   ' +
+                  denomination +
+                  ' บาท  จำนวน   ' +
+                  count +
+                  ' เหรียญ'
+              ] = count;
+            }
+            change -= count * denomination;
+          }
+        }
+
+        var changeResultText = 'ผลลัพธ์:<br>'; // เพิ่ม <br> เพื่อแสดงผลเป็นแนวตั้ง
+        var isFirstDenomination = true;
+        for (var key in result) {
+          if (result.hasOwnProperty(key)) {
+            if (!isFirstDenomination) {
+              changeResultText += '<br>'; // เพิ่ม <br> เพื่อแสดงผลเป็นแนวตั้ง
+            }
+            changeResultText += key;
+            isFirstDenomination = false;
+          }
+        }
+        console.log(changeResultText);
+        changeResultDiv.innerHTML = changeResultText;
+      }
+    </script>
+  </body>
+</html>
