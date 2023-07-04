@@ -216,7 +216,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       print('---------------------ไม่มีสถานที่---------------------');
       Fluttertoast.showToast(
-          msg: 'ไม่มี "$cityName " อยู่ในฐานข้อมูลโว้ยยย',
+          msg: 'ไม่มี   "$cityName"  อยู่ในฐานข้อมูลโว้ย!!!',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 2,
